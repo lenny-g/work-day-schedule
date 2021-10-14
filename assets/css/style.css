@@ -26,6 +26,11 @@ textarea {
 }
 
 .time-block {
+  margin: 10px;
+  padding: 10px;
+  display: flex;
+  flex-direction: row;
+  justify-content: space-between;
   text-align: center;
   border-radius: 15px;
 }
