@@ -80,15 +80,15 @@ const renderDate = function () {
 
 const renderTimeBlocks = function () {
   const constructTimeBlockAndAppend = function (each) {
-    const timeBlock = `<div class="time-block   ${getClassName(each.hour)}">
+    const timeBlock = `<div class="time-block ${getClassName(each.hour)}">
       <div class="hour column">${each.name}</div>
       <div class="input column">
-        <textarea id=${each.name} placeholder="Please enter text...">${
+        <textarea id=${each.hour} placeholder="Please enter text...">${
       getEventFromLS(each.hour) || ""
     }</textarea>
       </div>
       <div class="save column">
-        <button class="saveBtn" data-id=${each.name}>SAVE</button>
+        <button class="saveBtn" id=${each.hour}>SAVE</button>
       </div>
     </div>`;
 
@@ -108,30 +108,17 @@ const getFromLocalStorage = function (key, defaultValue) {
   }
 };
 
-const verifyInput = function (event) {
-  const target = event.target;
-  const currentTarget = event.currentTarget;
+const saveEvent = function (event) {
+  const target = $(event.target);
 
-  const inpValue = $(".text-input");
-  const value = inpValue;
-
-  if (target.getAttribute("class") === "saveBtn" && !value) {
-    alert("Please input text");
+  // check if target if from button and if yes get the id of the button
+  if (target.is("button")) {
+    const dataFromLS = getFromLocalStorage("events", {});
+    const key = target.attr("id");
+    const textAreaValue = $(`textarea[id="${key}"]`).val();
+    dataFromLS[key] = textAreaValue;
+    localStorage.setItem("events", JSON.stringify(dataFromLS));
   }
-  if (target.getAttribute("class") === "saveBtn" && value) {
-    const id = target.getAttribute("data-id");
-    const text = $(`#${id}`).val();
-
-    if (!text) {
-      alert("Please enter text!");
-    } else {
-      console.log(text);
-    }
-  }
-};
-
-const saveInput = function (event) {
-  localStorage.setItem("hour", JSON.stringify([]));
 };
 
 const onLoad = function () {
@@ -140,6 +127,6 @@ const onLoad = function () {
   renderTimeBlocks();
 };
 
-$(".container").click(verifyInput);
+$(".container").click(saveEvent);
 
 $(document).ready(onLoad);
