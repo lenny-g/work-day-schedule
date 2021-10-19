@@ -1,7 +1,7 @@
 const timeData = [
   {
     name: "9am",
-    hour: 09,
+    hour: 9,
   },
   {
     name: "10am",
@@ -37,47 +37,65 @@ const timeData = [
   },
 ];
 
-const currentTime = moment().format("HH");
-console.log(this);
+const initialiseLocalStorage = function () {
+  const dataFromLS = JSON.parse(localStorage.getItem("events"));
 
-// The date of the current day
-const dateTitle = moment().format("dddd, MMMM Do");
+  if (!dataFromLS) {
+    localStorage.setItem("events", JSON.stringify({}));
+  }
+};
+
+const getClassName = function (hour) {
+  // return past present or future
+  const currentHour = 14;
+
+  if (hour === currentHour) {
+    return "present";
+  }
+
+  if (hour > currentHour) {
+    return "future";
+  }
+
+  return "past";
+};
+
+const getEventFromLS = function (hour) {
+  // get data from LS
+  const dataFromLS = getFromLocalStorage("events", {});
+
+  // find if data for hour is present in LS object
+  const event = dataFromLS[hour];
+
+  return event;
+};
 
 // constructing the display of the current da
-const constructDateTitle = function () {
-  document.getElementById("currentDay").textContent = dateTitle;
+const renderDate = function () {
+  // The date of the current day
+  const date = moment().format("dddd, MMMM Do");
+
+  $("#currentDay").text(date);
 };
 
-const constructTimeBlock = function () {
-  const callback = function (each) {
-    const timeBlock = `
-    <div class="time-block">
-    <form class ="row">
-    <div class="hour column">${each.name}</div>
-    <div class="input column">
-    <textarea class="text-input" placeholder="Please enter text..."></textarea>
-     </div>
-     <div class="save column">
-     <button class="saveBtn">SAVE</button>
-   </div>
-    </form>
-    </div>"`;
+const renderTimeBlocks = function () {
+  const constructTimeBlockAndAppend = function (each) {
+    const timeBlock = `<div class="time-block ${getClassName(each.hour)}">
+      <div class="hour column">${each.name}</div>
+      <div class="input column">
+        <textarea class="text-input" placeholder="Please enter text...">${
+          getEventFromLS(each.hour) || ""
+        }</textarea>
+      </div>
+      <div class="save column">
+        <button class="saveBtn">SAVE</button>
+      </div>
+    </div>`;
+
     $(".container").append(timeBlock);
-    return timeBlock;
   };
 
-  timeData.forEach(callback);
-};
-
-const verifyInput = function (event) {
-  const target = event.target;
-  const currentTarget = event.currentTarget;
-
-  if (target.getAttribute("class") === "saveBtn") {
-    saveInput();
-  } else {
-    console.log("NO!");
-  }
+  timeData.forEach(constructTimeBlockAndAppend);
 };
 
 const getFromLocalStorage = function (key, defaultValue) {
@@ -90,39 +108,31 @@ const getFromLocalStorage = function (key, defaultValue) {
   }
 };
 
-const findTense = function (each) {
-  const textInput = document.querySelector(".text-input");
-  const listTime = timeData.hour;
-  console.log(listTime);
+const verifyInput = function (event) {
+  const target = event.target;
+  const currentTarget = event.currentTarget;
 
-  if (listTime < currentTime) {
-    textInput.setAttribute("class", "past");
-  } else if (listTime === currentTime) {
-    textInput.setAttribute("class", "present");
-  } else if (listTime > currentTime) {
-    textInput.setAttribute("class", "future");
-  } else {
-    timeData++;
+  const inpValue = document.querySelector(".text-input").textContent;
+  const value = inpValue;
+
+  if (target.getAttribute("class") === "saveBtn" && !value) {
+    alert("Please input text");
   }
-  listTime.forEach(findTense);
+  if (target.getAttribute("class") === "saveBtn" && value) {
+    console.log("text-input");
+  }
 };
 
 const saveInput = function (event) {
   localStorage.setItem("name", JSON.stringify([]));
 };
 
-const initialiseLocalStorage = function () {
-  const dataFromLS = JSON.parse(localStorage.getItem("name"));
-  if (!dataFromLS) {
-    localStorage.setItem("name", JSON.stringify([]));
-  }
-};
-
 const onLoad = function () {
-  constructDateTitle();
-  constructTimeBlock();
+  renderDate();
   initialiseLocalStorage();
+  renderTimeBlocks();
 };
 
 $(".container").click(verifyInput);
+
 $(document).ready(onLoad);
