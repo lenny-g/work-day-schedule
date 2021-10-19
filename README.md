@@ -12,7 +12,7 @@ Click [here](https://lenny-g.github.io/work-day-schedule/) for finished webpage
 ## SCREENSHOTS
 
 This is a screenshot of the current webpage at 23:35pm
-![screenshot](./assets/screenshots/current-screen.png)
+![screenshot](./assets/screenshots/current-screenshot.png)
 This is a screenshot of the webpage when the current time is altered to 12am
 ![screenshot](./assets/screenshots/full-page.png)
 This is a screenshot of the local storage with input
