@@ -47,7 +47,7 @@ const initialiseLocalStorage = function () {
 
 const getClassName = function (hour) {
   // return past present or future
-  const currentHour = 14;
+  const currentHour = moment().format("HH");
 
   if (hour === currentHour) {
     return "present";
@@ -70,7 +70,7 @@ const getEventFromLS = function (hour) {
   return event;
 };
 
-// constructing the display of the current da
+// constructing the display of the current date
 const renderDate = function () {
   // The date of the current day
   const date = moment().format("dddd, MMMM Do");
@@ -80,15 +80,15 @@ const renderDate = function () {
 
 const renderTimeBlocks = function () {
   const constructTimeBlockAndAppend = function (each) {
-    const timeBlock = `<div class="time-block ${getClassName(each.hour)}">
+    const timeBlock = `<div class="time-block   ${getClassName(each.hour)}">
       <div class="hour column">${each.name}</div>
       <div class="input column">
-        <textarea class="text-input" placeholder="Please enter text...">${
-          getEventFromLS(each.hour) || ""
-        }</textarea>
+        <textarea id=${each.name} placeholder="Please enter text...">${
+      getEventFromLS(each.hour) || ""
+    }</textarea>
       </div>
       <div class="save column">
-        <button class="saveBtn">SAVE</button>
+        <button class="saveBtn" data-id=${each.name}>SAVE</button>
       </div>
     </div>`;
 
@@ -112,19 +112,26 @@ const verifyInput = function (event) {
   const target = event.target;
   const currentTarget = event.currentTarget;
 
-  const inpValue = document.querySelector(".text-input").textContent;
+  const inpValue = $(".text-input");
   const value = inpValue;
 
   if (target.getAttribute("class") === "saveBtn" && !value) {
     alert("Please input text");
   }
   if (target.getAttribute("class") === "saveBtn" && value) {
-    console.log("text-input");
+    const id = target.getAttribute("data-id");
+    const text = $(`#${id}`).val();
+
+    if (!text) {
+      alert("Please enter text!");
+    } else {
+      console.log(text);
+    }
   }
 };
 
 const saveInput = function (event) {
-  localStorage.setItem("name", JSON.stringify([]));
+  localStorage.setItem("hour", JSON.stringify([]));
 };
 
 const onLoad = function () {
