@@ -1,3 +1,5 @@
+// an array containing the name of the hours presented in the schedule and their numerical counterparts to compare with current time
+
 const timeData = [
   {
     name: "9am",
@@ -37,6 +39,7 @@ const timeData = [
   },
 ];
 
+// This function creates the local storage folder
 const initialiseLocalStorage = function () {
   const dataFromLS = JSON.parse(localStorage.getItem("events"));
 
@@ -45,18 +48,19 @@ const initialiseLocalStorage = function () {
   }
 };
 
+// This function is to compare the numerical value of hour and the current hour.
 const getClassName = function (hour) {
   // return past present or future
   const currentHour = moment().format("HH");
-
+  // if the hour is equal to currenthour then the time block css should change the background to red
   if (hour === currentHour) {
     return "present";
   }
-
+  // if the hour is larger numerically than the current hour then the time blocks css should change the background to green
   if (hour > currentHour) {
     return "future";
   }
-
+  // if the hour doesn't meet either of these statements then the css of the time block should change the background to grey
   return "past";
 };
 
@@ -78,7 +82,9 @@ const renderDate = function () {
   $("#currentDay").text(date);
 };
 
+// This function renders the html of the time blocks in template strings.
 const renderTimeBlocks = function () {
+  // This function creates a loop of time blocks for each item that is in the object array.
   const constructTimeBlockAndAppend = function (each) {
     const timeBlock = `<div class="time-block ${getClassName(each.hour)}">
       <div class="hour column">${each.name}</div>
@@ -98,6 +104,7 @@ const renderTimeBlocks = function () {
   timeData.forEach(constructTimeBlockAndAppend);
 };
 
+// this gets the key and value from local storage if there is no data then the default value is returned
 const getFromLocalStorage = function (key, defaultValue) {
   const localStorageData = JSON.parse(localStorage.getItem(key));
 
@@ -121,12 +128,14 @@ const saveEvent = function (event) {
   }
 };
 
+// functions that should render when the page is loaded
 const onLoad = function () {
   renderDate();
   initialiseLocalStorage();
   renderTimeBlocks();
 };
 
+// This event listener is located in the container for the time blocks and the function is activated when a button is clicked
 $(".container").click(saveEvent);
 
 $(document).ready(onLoad);
